@@ -9,14 +9,14 @@
 
 This module is designed to function as both a standalone MAG mOTUs profiling pipeline as well as a component of the larger CAMP metagenomics analysis pipeline. As such, it is both self-contained (ex. instructions included for the setup of a versioned environment, etc.), and seamlessly compatible with other CAMP modules (ex. ingests and spawns standardized input/output config files, etc.). 
 
-The CAMP mOTUs profiling pipeline utilizes the `mOTU profiler <https://github.com/motu-tool/mOTUs>`_ tool for the estimation of relative taxonomic abundance of organisms in a metagenomic sample, long reads profiling and SNV calling using marker genes.
+The CAMP mOTUs profiling pipeline utilizes the [mOTU profiler](https://github.com/motu-tool/mOTUs) tool for the estimation of relative taxonomic abundance of organisms in a metagenomic sample, long reads profiling and SNV calling using marker genes.
 <!--- 
 Add longer description of your workflow's algorithmic contents 
 --->
 
 ## Installation
 
-1. Clone repo from [Github](<https://github.com/MetaSUB-CAMP/camp_motus-profiler). 
+1. Clone repo from [Github](https://github.com/MetaSUB-CAMP/camp_motus-profiler). 
 ```Bash
 git clone https://github.com/MetaSUB-CAMP/camp_motus-profiler
 ```
@@ -138,7 +138,7 @@ python3 /path/to/camp_motus-profiler/workflow/motus-profiler.py --dry_run \
 
 ## Credits
 
-- This package was created with [Cookiecutter](https://github.com/cookiecutter/cookiecutter>) as a simplified version of the [project template](https://github.com/audreyr/cookiecutter-pypackage>).
+- This package was created with [Cookiecutter](https://github.com/cookiecutter/cookiecutter) as a simplified version of the [project template](https://github.com/audreyr/cookiecutter-pypackage).
  
 - Free software: MIT License
 - Documentation: https://camp-documentation.readthedocs.io/en/latest/motus-profiler.html
