@@ -1,0 +1,4 @@
+sample_name,illumina_fwd,illumina_rev
+metasub_monumentome_1,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257237_1.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257237_2.fastq.gz
+metasub_monumentome_2,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257242_1.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257242_2.fastq.gz
+metasub_monumentome_3,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257266_1.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_monumentome/input/SRR27257266_1.fastq.gz

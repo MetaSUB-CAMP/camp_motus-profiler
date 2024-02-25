@@ -26,8 +26,10 @@ def ingest_samples(samples, tmp):
     lst = df.values.tolist()
     for i,l in enumerate(lst):
         # Symlink your original data to the temporary directory
-        # if not exists(join(tmp, s[i] + '.fasta')):
+        if not exists(join(tmp, s[i] + '_1.fastq')):
             # Example: symlink(abspath(l[0]), join(tmp, s[i] + '.fasta'))
+            extract_from_gzip(abspath(l[0]), join(tmp, s[i] + '_1.fastq'))
+            extract_from_gzip(abspath(l[1]), join(tmp, s[i] + '_2.fastq'))
             # Example: extract_from_gzip(abspath(l[1]), join(tmp, s[i] + '_1.fastq'))
             # Example: extract_from_gzip(abspath(l[2]), join(tmp, s[i] + '_2.fastq'))
     return s
@@ -45,7 +47,7 @@ class Workflow_Dirs:
     LOG = ''
 
     def __init__(self, work_dir, module):
-        self.OUT = join(work_dir, 'motus-profiler')
+        self.OUT = join(work_dir, module)
         self.TMP = join(work_dir, 'tmp') 
         self.LOG = join(work_dir, 'logs') 
         # Add custom subdirectories to organize intermediate files
@@ -68,7 +70,7 @@ def cleanup_files(work_dir, df):
     for d in []: # Add directories to clean up
         for s in smps:
             os.remove(join(work_dir, 'motus-profiler', d, file_to_remove))
-            os.remove(join(work_dir, 'motus-profiler', d, file_to_remove))
+            # os.remove(join(work_dir, 'motus-profiler', d, file_to_remove))
 
 
 def print_cmds(f):

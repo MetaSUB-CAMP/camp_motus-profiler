@@ -3,8 +3,8 @@
 
 # --- sample_rule --- #
 
-sample_rule_threads: 10
-sample_rule_mem_mb: 100000
+motus_profiling_threads: 20
+motus_profiling_mem_mb: 100000
 
 
 # --- first_rule --- #
