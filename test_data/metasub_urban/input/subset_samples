@@ -1,0 +1,14 @@
+#!/bin/bash
+
+READS_TO_SUBSET=430000
+
+for filename in *; do
+        basename="${filename%%.*}"
+        extension="${filename#*.}"
+        if [[ $extension == "fastq.gz" ]]; then
+		seqkit sample -p 0.1 $filename | seqkit head -n $READS_TO_SUBSET -o ${basename}_small.fastq.gz
+        fi
+done
+
+exit 0
+
