@@ -30,8 +30,8 @@ def check_make(d):
 rule all:
     input:
         # join(dirs.OUT, 'final_reports', 'samples.csv')
-        expand(join(dirs.OUT, 'mOTU_taxonomic_profile', '{sample}', 'taxonomic_profile.txt'), sample=SAMPLES)
-
+        expand(join(dirs.OUT, 'mOTU_taxonomic_profile', '{sample}', 'taxonomic_profile.txt'), sample=SAMPLES) + expand(join(dirs.OUT, 'mOTU_SNV', '{sample}_result.bam'), sample=SAMPLES) + [join(dirs.OUT, 'mOTU_SNV', 'called_snv')]
+        
 # --- Workflow steps --- #
 
 rule motu_profile:
@@ -54,3 +54,47 @@ rule motu_profile:
         """
 	motus profile -f {input.fwd} -r {input.rev} -t {threads} -o {params.out_dir}/taxonomic_profile.txt > {log} 2>&1
         """
+
+
+rule motu_map_snv:
+    input:
+        fwd = join(dirs.TMP, '{sample}_1.fastq'),
+        rev = join(dirs.TMP, '{sample}_2.fastq'),
+    output:
+        join(dirs.OUT, 'mOTU_SNV', '{sample}_result.bam'),
+    conda:
+        join(config['env_yamls'], 'motus-profiler.yaml'),
+    log:
+        join(dirs.LOG, 'mOTU_logs', '{sample}.out'),
+    threads: config['motus_profiling_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motus_profiling_mem_mb']) + 10000 * attempt,
+    params:
+        out_dir = join(dirs.OUT, 'mOTU_SNV'),
+    shell:
+        """
+	motus map_snv -f {input.fwd} -r {input.rev} -t {threads} -o {params.out_dir}/{wildcards.sample}_result.bam > {log} 2>&1
+        """
+
+rule motu_call_snv:
+    input:
+        expand(join(dirs.OUT, 'mOTU_SNV', '{sample}_result.bam'), sample=SAMPLES),
+    output:
+        directory(join(dirs.OUT, 'mOTU_SNV', 'called_snv')),
+    conda:
+        join(config['env_yamls'], 'motus-profiler.yaml'),
+    log:
+        join(dirs.LOG, 'mOTU_logs', 'motu_snv_call.out'),
+    threads: config['motus_profiling_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motus_profiling_mem_mb']) + 10000 * attempt,
+    params:
+        inp_dir = join(dirs.OUT, 'mOTU_SNV'),
+    shell:
+        """
+	motus snv_call -d {params.inp_dir} -o {output} > {log} 2>&1
+        """
+
+
