@@ -1,11 +1,15 @@
 #'''Parameters config.'''#
 
-
 # --- general --- #
 
-some_constant:   2500
+long_reads: False
 
 
-# --- first_rule --- #
 
-other_constant:    10000
+# --- motu_snv_call --- #
+fb: 1
+fd: 1
+fm: 1
+fp: 0.01
+fc: 1
+
