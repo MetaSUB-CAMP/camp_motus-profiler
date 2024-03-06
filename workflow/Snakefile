@@ -25,32 +25,109 @@ def check_make(d):
     if not exists(d):
         os.makedirs(d)
 
+def workflow_mode_long_reads(wildcards):
+    if config['long_reads']:
+        return {'fwd': join(dirs.OUT, '0_converted_long_reads', '{sample}_1_converted.fastq'),
+		'rev': join(dirs.OUT, '0_converted_long_reads', '{sample}_2_converted.fastq') }
+    else:
+        return {'fwd': join(dirs.TMP, '{sample}_1.fastq'),
+		'rev': join(dirs.TMP, '{sample}_2.fastq') }
+
+
 # --- Workflow output --- #
 
 rule all:
     input:
         # join(dirs.OUT, 'final_reports', 'samples.csv')
-        expand(join(dirs.OUT, 'mOTU_taxonomic_profile', '{sample}', 'taxonomic_profile.txt'), sample=SAMPLES)
-
+        expand(join(dirs.OUT, 'taxonomic_profile', '{sample}', 'taxonomic_profile.txt'), sample=SAMPLES) + expand(join(dirs.OUT, 'SNV', '{sample}_result.bam'), sample=SAMPLES) + [join(dirs.OUT, 'SNV', 'called_snv')]
+        
 # --- Workflow steps --- #
 
-rule motu_profile:
+rule motu_long_read_prep:
     input:
         fwd = join(dirs.TMP, '{sample}_1.fastq'),
         rev = join(dirs.TMP, '{sample}_2.fastq'),
     output:
-        join(dirs.OUT, 'mOTU_taxonomic_profile', '{sample}', 'taxonomic_profile.txt'),
+        fwd_converted = join(dirs.OUT, '0_converted_long_reads', '{sample}_1_converted.fastq'),
+        rev_converted = join(dirs.OUT, '0_converted_long_reads', '{sample}_2_converted.fastq'),
     conda:
-        join(config['env_yamls'], 'motus-profiler.yaml'),
+        join(config['env_yamls'], 'motus-profiler-motus-pip.yaml'),
     log:
-        join(dirs.LOG, 'mOTU_logs', '{sample}.out'),
+        fwd_log = join(dirs.LOG, '0_converted_long_reads', '{sample}_1.out'),
+        rev_log = join(dirs.LOG, '0_converted_long_reads', '{sample}_2.out'),
+    threads: config['motu_long_read_prep_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motu_long_read_prep_mem_mb']) + 10000 * attempt,
+    shell:
+        """
+	motus prep_long -i {input.fwd} -o {output.fwd_converted} -no_gz > {log.fwd_log} 2>&1
+	motus prep_long -i {input.rev} -o {output.rev_converted} -no_gz > {log.rev_log} 2>&1
+        """
+
+rule motu_profile:
+    input:
+        unpack(workflow_mode_long_reads)
+    output:
+        join(dirs.OUT, 'taxonomic_profile', '{sample}', 'taxonomic_profile.txt'),
+    conda:
+        join(config['env_yamls'], 'motus-profiler-motus-pip.yaml'),
+    log:
+        join(dirs.LOG, 'taxonomic_profile', '{sample}.out'),
     threads: config['motus_profiling_threads'],
     resources:
         mem_mb = lambda wildcards, attempt: \
               int(config['motus_profiling_mem_mb']) + 10000 * attempt,
     params:
-        out_dir = join(dirs.OUT, 'mOTU_taxonomic_profile', '{sample}'),
+        out_dir = join(dirs.OUT, 'taxonomic_profile', '{sample}'),
     shell:
         """
 	motus profile -f {input.fwd} -r {input.rev} -t {threads} -o {params.out_dir}/taxonomic_profile.txt > {log} 2>&1
         """
+
+
+rule motu_map_snv:
+    input:
+        unpack(workflow_mode_long_reads),
+    output:
+        join(dirs.OUT, 'SNV', '{sample}_result.bam'),
+    conda:
+        join(config['env_yamls'], 'motus-profiler-motus-pip.yaml'),
+    log:
+        join(dirs.LOG, 'map_snv', '{sample}.out'),
+    threads: config['motu_map_snv_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motu_map_snv_mem_mb']) + 10000 * attempt,
+    params:
+        out_dir = join(dirs.OUT, 'SNV'),
+    shell:
+        """
+	motus map_snv -f {input.fwd} -r {input.rev} -t {threads} -o {params.out_dir}/{wildcards.sample}_result.bam > {log} 2>&1
+        """
+
+rule motu_call_snv:
+    input:
+        expand(join(dirs.OUT, 'SNV', '{sample}_result.bam'), sample=SAMPLES),
+    output:
+        directory(join(dirs.OUT, 'SNV', 'called_snv')),
+    conda:
+        join(config['env_yamls'], 'motus-profiler-motus-pip.yaml'),
+    log:
+        join(dirs.LOG, 'snv_call', 'motu_snv_call.out'),
+    threads: config['motu_call_snv_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motu_call_snv_mem_mb']) + 10000 * attempt,
+    params:
+        inp_dir = join(dirs.OUT, 'SNV'),
+        fb = config['fb'],
+        fd = config['fd'],
+        fm = config['fm'],
+        fp = config['fp'],
+        fc = config['fc'],
+    shell:
+        """
+	motus snv_call -d {params.inp_dir} -fb {params.fb} -fd {params.fd} -fm {params.fm} -fp {params.fp} -fc {params.fc} -o {output} > {log} 2>&1
+        """
+
