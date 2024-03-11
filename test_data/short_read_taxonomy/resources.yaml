@@ -1,0 +1,25 @@
+#'''Computational resource config.'''#
+
+
+# --- motu_long_read_prep --- #
+
+motu_long_read_prep_threads: 20
+motu_long_read_prep_mem_mb: 100000
+
+
+# --- motu_profile --- #
+
+motus_profiling_threads: 20
+motus_profiling_mem_mb: 100000
+
+
+# --- motu_map_snv --- #
+
+motu_map_snv_threads: 5
+motu_map_snv_mem_mb: 20000
+
+
+# --- motu_call_snv --- #
+
+motu_call_snv_threads: 5
+motu_call_snv_mem_mb: 20000

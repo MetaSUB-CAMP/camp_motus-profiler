@@ -1,0 +1,4 @@
+sample_name,illumina_fwd,illumina_rev,scientific name
+metasub_urban_1,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257237_1_small.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257237_2_small.fastq.gz,urban metagenome
+metasub_urban_2,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257242_1_small.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257242_2_small.fastq.gz,urban metagenome
+metasub_urban_3,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257266_1_small.fastq.gz,/path/to/camp_motus-profiler/test_data/metasub_urban/SRR27257266_2_small.fastq.gz,urban metagenome

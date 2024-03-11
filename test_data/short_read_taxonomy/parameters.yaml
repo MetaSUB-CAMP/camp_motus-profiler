@@ -1,11 +1,13 @@
 #'''Parameters config.'''#
 
+
 # --- general --- #
 
 long_reads: False
 
 
 # --- motu_snv_call --- #
+
 fb: 1
 fd: 1
 fm: 1

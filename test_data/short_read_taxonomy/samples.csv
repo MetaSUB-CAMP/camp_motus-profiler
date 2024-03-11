@@ -1,0 +1,2 @@
+sample_name,illumina_fwd,illumina_rev
+uhgg,/path/to/camp_motus-profiler/test_data/short_read_taxonomy/uhgg_1.fastq.gz,/path/to/camp_motus-profiler/test_data/short_read_taxonomy/uhgg_2.fastq.gz
