@@ -27,6 +27,7 @@ git clone https://github.com/MetaSUB-CAMP/camp_motus-profiler
 cd camp_motus-profiler
 conda env create -f configs/conda/motus-profiler.yaml
 conda activate motus-profiler
+motus downloadDB
 ```
 
 3. Update the relevant parameters (if applicable- for example, location of external non-conda tools) in `test_data/parameters.yaml`.
