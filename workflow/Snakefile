@@ -51,7 +51,7 @@ rule motu_long_read_prep:
         fwd_converted = join(dirs.OUT, '0_converted_long_reads', '{sample}_1_converted.fastq'),
         rev_converted = join(dirs.OUT, '0_converted_long_reads', '{sample}_2_converted.fastq'),
     conda:
-        'motus-profiler-motus-pip',
+        'motus-profiler',
     log:
         fwd_log = join(dirs.LOG, '0_converted_long_reads', '{sample}_1.out'),
         rev_log = join(dirs.LOG, '0_converted_long_reads', '{sample}_2.out'),
@@ -71,7 +71,7 @@ rule motu_profile:
     output:
         join(dirs.OUT, 'taxonomic_profile', '{sample}', 'taxonomic_profile.txt'),
     conda:
-        'motus-profiler-motus-pip',
+        'motus-profiler',
     log:
         join(dirs.LOG, 'taxonomic_profile', '{sample}.out'),
     threads: config['motus_profiling_threads'],
@@ -92,7 +92,7 @@ rule motu_map_snv:
     output:
         join(dirs.OUT, 'SNV', '{sample}_result.bam'),
     conda:
-        'motus-profiler-motus-pip',
+        'motus-profiler',
     log:
         join(dirs.LOG, 'map_snv', '{sample}.out'),
     threads: config['motu_map_snv_threads'],
@@ -112,7 +112,7 @@ rule motu_call_snv:
     output:
         directory(join(dirs.OUT, 'SNV', 'called_snv')),
     conda:
-        'motus-profiler-motus-pip',
+        'motus-profiler',
     log:
         join(dirs.LOG, 'snv_call', 'motu_snv_call.out'),
     threads: config['motu_call_snv_threads'],

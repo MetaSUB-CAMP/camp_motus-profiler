@@ -27,6 +27,13 @@ git clone https://github.com/MetaSUB-CAMP/camp_motus-profiler
 cd camp_motus-profiler
 conda env create -f configs/conda/motus-profiler.yaml
 conda activate motus-profiler
+```
+Install mOTU tool from source to have the SNV calling option.
+```Bash
+cd ~
+git clone https://github.com/motu-tool/mOTUs.git
+cd mOTUs
+pip install .
 motus downloadDB
 ```
 
