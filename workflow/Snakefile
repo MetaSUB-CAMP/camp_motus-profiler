@@ -39,7 +39,7 @@ def workflow_mode_long_reads(wildcards):
 rule all:
     input:
         # join(dirs.OUT, 'final_reports', 'samples.csv')
-        expand(join(dirs.OUT, 'taxonomic_profile', '{sample}', 'taxonomic_profile.txt'), sample=SAMPLES) + expand(join(dirs.OUT, 'SNV', '{sample}_result.bam'), sample=SAMPLES) + [join(dirs.OUT, 'SNV', 'called_snv')]
+        expand(join(dirs.OUT, 'SNV', '{sample}_result.bam'), sample=SAMPLES) + [join(dirs.OUT, 'SNV', 'called_snv'), join(dirs.OUT, 'taxonomic_profile', 'merged_profile.txt')]
         
 # --- Workflow steps --- #
 
@@ -69,7 +69,7 @@ rule motu_profile:
     input:
         unpack(workflow_mode_long_reads)
     output:
-        join(dirs.OUT, 'taxonomic_profile', '{sample}', 'taxonomic_profile.txt'),
+        join(dirs.OUT, 'taxonomic_profile', '{sample}_profile.txt'),
     conda:
         'motus-profiler',
     log:
@@ -79,10 +79,30 @@ rule motu_profile:
         mem_mb = lambda wildcards, attempt: \
               int(config['motus_profiling_mem_mb']) + 10000 * attempt,
     params:
-        out_dir = join(dirs.OUT, 'taxonomic_profile', '{sample}'),
+        out_dir = join(dirs.OUT, 'taxonomic_profile'),
     shell:
         """
-	motus profile -f {input.fwd} -r {input.rev} -t {threads} -o {params.out_dir}/taxonomic_profile.txt > {log} 2>&1
+	motus profile -f {input.fwd} -r {input.rev} -t {threads} -n {wildcards.sample} -o {params.out_dir}/{wildcards.sample}_profile.txt > {log} 2>&1
+        """
+
+rule motu_merge:
+    input:
+        input_samples = expand(join(dirs.OUT, 'taxonomic_profile', '{sample}_profile.txt'), sample=SAMPLES)
+    output:
+        outfile = join(dirs.OUT, 'taxonomic_profile', 'merged_profile.txt')
+    conda:
+        'motus-profiler',
+    log:
+        join(dirs.LOG, 'taxonomic_profile', 'merge.out'),
+    threads: config['motus_profiling_threads'],
+    resources:
+        mem_mb = lambda wildcards, attempt: \
+              int(config['motus_profiling_mem_mb']) + 10000 * attempt,
+    params:
+        samples_to_merge = ','.join(expand(join(dirs.OUT, 'taxonomic_profile', '{sample}_profile.txt'), sample=SAMPLES))
+    shell:
+        """
+	motus merge -i {params.samples_to_merge} -o {output.outfile} > {log} 2>&1
         """
 
 
