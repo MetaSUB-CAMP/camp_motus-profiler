@@ -148,11 +148,11 @@ def test():
     main_dir = dirname(dirname(abspath(__file__))) # /path/to/main_dir/workflow/cli.py
     workflow = join(main_dir, 'workflow', 'Snakefile')
     work_dir = join(main_dir, 'test_out')
-    samples = join(main_dir, 'test_data', 'samples.csv')
+    samples = join(main_dir, 'test_data', 'short_read_taxonomy', 'samples.csv')
     
     # Set location of rule (and program) parameters and resources
-    pyaml = join(main_dir, 'test_data', 'parameters.yaml')
-    ryaml = join(main_dir, 'test_data', 'resources.yaml')
+    pyaml = join(main_dir, 'test_data', 'short_read_taxonomy', 'parameters.yaml')
+    ryaml = join(main_dir, 'test_data', 'short_read_taxonomy', 'resources.yaml')
 
     # Set up the conda environment directory
     env_dir = join(main_dir, 'conda_envs')
